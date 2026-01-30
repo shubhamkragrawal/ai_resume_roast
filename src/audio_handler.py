@@ -54,7 +54,7 @@ except Exception as e:
 # Custom voice settings - NOW ONLY FOR ROAST MODE
 USE_CUSTOM_VOICE_FOR_ROAST = True  # Set to True to use custom voice for Roast Mode only
 CUSTOM_VOICE_ID = "pNInz6obpgDQGcFmaJgB"  # Will be set after cloning
-CUSTOM_VOICE_PATH = "/Users/shubhamagrawal/Documents/MS fall 25/MS fall'25/matthew_sample.wav"  # Path to your .wav file
+CUSTOM_VOICE_PATH = "/matthew_sample.wav"  # Path to your .wav file
 CUSTOM_VOICE_NAME = "my_custom_voice"  # Name for your cloned voice
 
 # Voice configurations for different feedback modes

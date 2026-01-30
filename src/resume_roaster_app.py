@@ -299,35 +299,4 @@ if st.session_state.resume_parsed:
 else:
     st.info("👈 Upload your resume using the sidebar to get started!")
     
-    # st.markdown("""
-    # ### 🚀 Features:
     
-    # **Voice-First Experience:**
-    # - All AI responses are automatically read aloud with realistic human voices
-    # - Different voices for different feedback modes (professional, sarcastic, constructive)
-    # - Text available on-demand with "Show Text" button
-    
-    # **Feedback Modes:**
-    # - **Normal Mode**: Balanced, professional feedback
-    # - ** Roast Mode**: Brutally honest, sarcastic criticism (no holds barred!)
-    # - ** Constructive Mode**: Detailed, actionable improvement suggestions
-    
-    # **Job Description Matching:**
-    # - Upload a JD to get targeted feedback
-    # - See exactly what keywords and skills you're missing
-    # - Get role-specific improvement suggestions
-    
-    # ### Example Questions:
-    # - "Roast my resume - don't hold back!"
-    # - "How can I improve for a senior developer role?"
-    # - "What keywords am I missing for this JD?"
-    # - "Rate my resume from 1-10 and explain why"
-    # - "What would make a recruiter reject this?"
-    
-    # ### 🎧 How It Works:
-    # 1. Upload your resume (PDF, TXT, or paste text)
-    # 2. Optionally add a job description for targeted feedback
-    # 3. Ask questions - get **voice responses first**
-    # 4. Click "Show Text" if you want to read the full response
-    # 5. All processing uses high-quality ElevenLabs voices
-    # """)

@@ -339,13 +339,13 @@ def rag_query(user_query, feedback_mode="Normal", job_description=None, k=6):
         if "api" in str(e).lower() or "key" in str(e).lower() or "auth" in str(e).lower():
             return """❌ **OpenRouter API Error**
 
-Please check your OpenRouter API key:
+                Please check your OpenRouter API key:
 
-1. Get an API key from: https://openrouter.ai/keys
-2. Add to your .env file: OPENROUTER_API_KEY=your-key-here
-3. Make sure you have credits in your OpenRouter account
+                1. Get an API key from: https://openrouter.ai/keys
+                2. Add to your .env file: OPENROUTER_API_KEY=your-key-here
+                3. Make sure you have credits in your OpenRouter account
 
-Error details: """ + str(e)[:200]
+                Error details: """ + str(e)[:200]
         
         if feedback_mode == "🔥 Roast Mode":
             return "🔥 The system crashed trying to process this resume. That should tell you something. Fix your API key first though."
