@@ -41,14 +41,14 @@ try:
         client = ElevenLabs()
     
     ELEVENLABS_AVAILABLE = True
-    print("✅ ElevenLabs client initialized successfully")
+    print("ElevenLabs client initialized successfully")
     print(f"   API Key: {ELEVEN_API_KEY[:10]}..." if ELEVEN_API_KEY else "   API Key: Not set")
     
 except ImportError as e:
-    print(f"⚠️ ElevenLabs library not installed: {e}")
+    print(f"ElevenLabs library not installed: {e}")
     print("   Install with: pip install elevenlabs")
 except Exception as e:
-    print(f"⚠️ ElevenLabs initialization failed: {e}")
+    print(f"ElevenLabs initialization failed: {e}")
     print(f"   Make sure your API key is correct: {ELEVEN_API_KEY[:10] if ELEVEN_API_KEY else 'None'}...")
 
 # Custom voice settings - NOW ONLY FOR ROAST MODE
@@ -100,12 +100,12 @@ def clone_custom_voice(audio_file_path, voice_name, description="Custom cloned v
     global CUSTOM_VOICE_ID, USE_CUSTOM_VOICE_FOR_ROAST
     
     if not ELEVENLABS_AVAILABLE or not client:
-        print("⚠️ ElevenLabs not available")
+        print("ElevenLabs not available")
         return None
     
     audio_path = Path(audio_file_path)
     if not audio_path.exists():
-        print(f"❌ Audio file not found: {audio_file_path}")
+        print(f"Audio file not found: {audio_file_path}")
         return None
     
     print(f"🎤 Cloning voice from: {audio_file_path}")
@@ -126,7 +126,7 @@ def clone_custom_voice(audio_file_path, voice_name, description="Custom cloned v
         CUSTOM_VOICE_ID = voice.voice_id
         USE_CUSTOM_VOICE_FOR_ROAST = True
         
-        print(f"✅ Voice cloned successfully!")
+        print(f"Voice cloned successfully!")
         print(f"   Voice ID: {CUSTOM_VOICE_ID}")
         print(f"   Name: {voice_name}")
         print(f"   This voice will be used for Roast Mode only")
@@ -137,19 +137,19 @@ def clone_custom_voice(audio_file_path, voice_name, description="Custom cloned v
         return CUSTOM_VOICE_ID
         
     except Exception as e:
-        print(f"❌ Voice cloning failed: {e}")
+        print(f"Voice cloning failed: {e}")
         return None
 
 def list_available_voices():
     """List all available voices (including custom cloned voices)."""
     if not ELEVENLABS_AVAILABLE or not client:
-        print("⚠️ ElevenLabs not available")
+        print("ElevenLabs not available")
         return []
     
     try:
         voices = client.voices.get_all()
         
-        print("\n📋 Available Voices:")
+        print("\nAvailable Voices:")
         print("=" * 60)
         
         voice_list = []
@@ -166,21 +166,21 @@ def list_available_voices():
         return voice_list
         
     except Exception as e:
-        print(f"❌ Failed to list voices: {e}")
+        print(f"Failed to list voices: {e}")
         return []
 
 def delete_custom_voice(voice_id):
     """Delete a custom cloned voice."""
     if not ELEVENLABS_AVAILABLE or not client:
-        print("⚠️ ElevenLabs not available")
+        print("ElevenLabs not available")
         return False
     
     try:
         client.voices.delete(voice_id)
-        print(f"✅ Voice {voice_id} deleted successfully")
+        print(f"Voice {voice_id} deleted successfully")
         return True
     except Exception as e:
-        print(f"❌ Failed to delete voice: {e}")
+        print(f"Failed to delete voice: {e}")
         return False
 
 def clean_text_for_speech(text):
@@ -266,7 +266,7 @@ def text_to_speech(text, mode="Normal"):
     """
     
     if not ELEVENLABS_AVAILABLE or not client:
-        print("⚠️ ElevenLabs not available. Please check your API key.")
+        print("ElevenLabs not available. Please check your API key.")
         return None
     
     # Clean text for speech
@@ -315,16 +315,16 @@ def text_to_speech(text, mode="Normal"):
         # Collect audio bytes from generator
         audio_bytes = b"".join(audio_generator)
         
-        print(f"✅ Audio generated successfully ({len(audio_bytes)} bytes)")
+        print(f"Audio generated successfully ({len(audio_bytes)} bytes)")
         return audio_bytes
         
     except Exception as e:
-        print(f"❌ ElevenLabs TTS failed: {e}")
+        print(f"ElevenLabs TTS failed: {e}")
         
         # Check for API key issues
         error_str = str(e).lower()
         if "auth" in error_str or "key" in error_str or "401" in error_str:
-            print("⚠️ API Key issue detected!")
+            print("API Key issue detected!")
             print(f"   Current key starts with: {ELEVEN_API_KEY[:10] if ELEVEN_API_KEY else 'None'}...")
             print("   Get your key from: https://elevenlabs.io/app/settings/api-keys")
             print("   Set ELEVENLABS_API_KEY_HARDCODED in audio_handler.py or add to .env file")
@@ -349,7 +349,7 @@ if __name__ == "__main__":
     print("=" * 60)
     
     if not ELEVENLABS_AVAILABLE:
-        print("❌ ElevenLabs not initialized. Please check your API key.")
+        print("ElevenLabs not initialized. Please check your API key.")
         print("   Set ELEVENLABS_API_KEY in your .env file")
         exit(1)
     
@@ -370,10 +370,10 @@ if __name__ == "__main__":
             )
             
             if voice_id:
-                print(f"\n✅ Custom voice ready for Roast Mode! Voice ID: {voice_id}")
+                print(f"\nCustom voice ready for Roast Mode! Voice ID: {voice_id}")
                 USE_CUSTOM_VOICE_FOR_ROAST = True
             else:
-                print("\n❌ Voice cloning failed. Using default voice for Roast Mode.")
+                print("\nVoice cloning failed. Using default voice for Roast Mode.")
     else:
         print(f"\n2. No custom voice file found at: {CUSTOM_VOICE_PATH}")
         print("   Place your .wav file there to enable custom voice cloning for Roast Mode")
@@ -398,9 +398,9 @@ if __name__ == "__main__":
             output_path = f"test_audio_{mode.replace(' ', '_').replace('🔥', 'roast').replace('💡', 'constructive')}.mp3"
             with open(output_path, "wb") as f:
                 f.write(audio_bytes)
-            print(f"✅ Saved: {output_path}")
+            print(f"Saved: {output_path}")
         else:
-            print(f"❌ Failed to generate audio for {mode}")
+            print(f"Failed to generate audio for {mode}")
     
     print("\n" + "=" * 60)
     print("Testing complete!")

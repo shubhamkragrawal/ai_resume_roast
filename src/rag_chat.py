@@ -23,7 +23,7 @@ api_call_times = []
 MAX_CALLS_PER_MINUTE = 10  # OpenRouter has higher limits
 
 # OpenRouter API configuration
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = None
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 GEMINI_MODEL = "google/gemini-2.5-pro"  # OpenRouter model identifier
 
@@ -41,7 +41,7 @@ def check_cache(cache_key):
                 cached_data = json.load(f)
             # Check if cache is less than 1 hour old
             if time.time() - cached_data['timestamp'] < 3600:
-                print("✅ Using cached response")
+                print("Using cached response")
                 return cached_data['response']
         except:
             pass
@@ -57,7 +57,7 @@ def save_to_cache(cache_key, response):
                 'timestamp': time.time()
             }, f)
     except Exception as e:
-        print(f"⚠️ Cache save failed: {e}")
+        print(f"Cache save failed: {e}")
 
 def check_rate_limit():
     """Check if we're within rate limits."""
@@ -71,7 +71,7 @@ def check_rate_limit():
     
     if calls_in_last_minute >= MAX_CALLS_PER_MINUTE:
         wait_time = 60 - (current_time - api_call_times[0])
-        print(f"⚠️ RATE LIMIT: {calls_in_last_minute} calls in last minute")
+        print(f"RATE LIMIT: {calls_in_last_minute} calls in last minute")
         print(f"   Waiting {wait_time:.1f} seconds...")
         return False, wait_time
     
@@ -81,7 +81,7 @@ def record_api_call():
     """Record that an API call was made."""
     global api_call_times
     api_call_times.append(time.time())
-    print(f"📊 API calls in last minute: {len(api_call_times)}/{MAX_CALLS_PER_MINUTE}")
+    print(f"API calls in last minute: {len(api_call_times)}/{MAX_CALLS_PER_MINUTE}")
 
 def build_prompt(user_query, context, feedback_mode, jd_comparison=None):
     """Build the prompt based on feedback mode."""
@@ -89,45 +89,46 @@ def build_prompt(user_query, context, feedback_mode, jd_comparison=None):
     if feedback_mode == "🔥 Roast Mode":
         system_message = """You are a brutally honest resume critic with a sharp tongue. Your job is to ROAST this resume mercilessly.
 
-BE BLUNT AND DIRECT. No questions, no hand-holding - just pure, unfiltered criticism. Point out:
-- Vague, meaningless statements like "responsible for" or "worked on"
-- Missing metrics and numbers (if you didn't quantify it, it didn't happen)
-- Weak action verbs that make you sound passive
-- Buzzword soup and corporate jargon
-- Formatting disasters and readability issues
-- Anything that screams "I have no idea what I actually accomplished"
+                    BE BLUNT AND DIRECT. No questions, no hand-holding - just pure, unfiltered criticism. Point out:
+                    - Vague, meaningless statements like "responsible for" or "worked on"
+                    - Missing metrics and numbers (if you didn't quantify it, it didn't happen)
+                    - Weak action verbs that make you sound passive
+                    - Buzzword soup and corporate jargon
+                    - Formatting disasters and readability issues
+                    - Anything that screams "I have no idea what I actually accomplished"
 
-Use sarcasm. Be harsh. Mock the bad parts relentlessly. Examples:
-- "Responsible for managing projects" - Congratulations, you showed up to work and breathed air.
-- No numbers anywhere? What did you actually DO? Exist in the office space?
-- "Team player" - Thanks for that groundbreaking insight. Next you'll tell me you have "strong communication skills."
+                    Use sarcasm. Be harsh. Mock the bad parts relentlessly. Examples:
+                    - "Responsible for managing projects" - Congratulations, you showed up to work and breathed air.
+                    - No numbers anywhere? What did you actually DO? Exist in the office space?
+                    - "Team player" - Thanks for that groundbreaking insight. Next you'll tell me you have "strong communication skills."
 
-End with a harsh numerical rating out of 10 and a one-line brutal summary.
+                    End with a harsh numerical rating out of 10 and a one-line brutal summary.
 
-DO NOT ASK QUESTIONS. DO NOT BE ENCOURAGING. Just roast it."""
+                    DO NOT ASK QUESTIONS. DO NOT BE ENCOURAGING. Just roast it."""
 
     elif feedback_mode == "💡 Constructive Mode":
         system_message = """You are an expert resume coach providing detailed, actionable feedback.
 
-For each issue you identify, provide:
-1. WHAT'S WRONG: Be specific about the problem
-2. WHY IT MATTERS: Explain the impact on recruiters/ATS
-3. HOW TO FIX IT: Give concrete examples and templates
-4. BEFORE/AFTER: Show the transformation
+                    For each issue you identify, provide:
+                    1. WHAT'S WRONG: Be specific about the problem
+                    2. WHY IT MATTERS: Explain the impact on recruiters/ATS
+                    3. HOW TO FIX IT: Give concrete examples and templates
+                    4. BEFORE/AFTER: Show the transformation
 
-Focus on:
-- Quantifiable achievements (numbers, percentages, scale, impact)
-- Strong action verbs (achieved, spearheaded, architected vs. managed, helped, worked on)
-- ATS keyword optimization
-- Clear impact statements (Action + Result + Benefit)
-- Proper structure and formatting
+                    Focus on:
+                    - Quantifiable achievements (numbers, percentages, scale, impact)
+                    - Strong action verbs (achieved, spearheaded, architected vs. managed, helped, worked on)
+                    - ATS keyword optimization
+                    - Clear impact statements (Action + Result + Benefit)
+                    - Proper structure and formatting
 
-Be thorough but practical. Provide real examples the person can immediately use."""
+                    Be thorough but practical. Provide real examples the person can immediately use."""
 
     else:  # Normal mode
         system_message = """You are a professional resume consultant providing balanced feedback.
 
-Be honest but encouraging. Point out both strengths and weaknesses. Give specific, actionable suggestions for improvement. Keep responses focused and practical."""
+                    Be honest but encouraging. Point out both strengths and weaknesses. Give specific, actionable suggestions for improvement.
+                      Keep responses focused and practical."""
 
     # Add JD comparison context if available
     jd_context = ""
@@ -135,19 +136,19 @@ Be honest but encouraging. Point out both strengths and weaknesses. Give specifi
         match_score = jd_comparison.get('overall_match', 0)
         weak_sections = jd_comparison.get('weak_sections', [])
         jd_context = f"""
-JOB DESCRIPTION ALIGNMENT:
-- Match Score: {match_score:.1f}%
-- Sections needing improvement: {', '.join(weak_sections) if weak_sections else 'None'}
+                JOB DESCRIPTION ALIGNMENT:
+                - Match Score: {match_score:.1f}%
+                - Sections needing improvement: {', '.join(weak_sections) if weak_sections else 'None'}
 
-Address gaps between the resume and JD requirements in your feedback.
-"""
+                Address gaps between the resume and JD requirements in your feedback.
+                """
 
     user_message = f"""{jd_context}
 
-RESUME CONTENT:
-{context}
+                RESUME CONTENT:
+                {context}
 
-USER REQUEST: {user_query}"""
+                USER REQUEST: {user_query}"""
     
     return system_message, user_message
 
@@ -171,7 +172,7 @@ def enhance_roast_response(response):
 def enhance_constructive_response(response):
     """Add structure to constructive feedback without exposing system instructions."""
     header = "💡 **CONSTRUCTIVE ANALYSIS** 💡\n\n"
-    footer = "\n\n---\n✅ *You've got this! Every improvement matters.*"
+    footer = "\n\n---\n*You've got this! Every improvement matters.*"
     return header + response + footer
 
 def call_openrouter_api(system_message, user_message, feedback_mode):

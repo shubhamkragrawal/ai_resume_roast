@@ -22,7 +22,7 @@ def get_model():
     if model is None:
         print("Loading embedding model...")
         model = SentenceTransformer(EMBEDDING_MODEL)
-        print("✅ Embedding model loaded")
+        print("Embedding model loaded")
     return model
 
 def chunk_text(text, max_tokens=200, overlap=50):
@@ -85,7 +85,6 @@ def build_embeddings(sections, combined_text, job_description=None):
             })
             chunk_id += 1
     
-    # Add job description if provided
     if job_description and job_description.strip():
         print("Adding job description to index...")
         jd_chunks = chunk_text(job_description, max_tokens=250)
@@ -100,19 +99,16 @@ def build_embeddings(sections, combined_text, job_description=None):
             })
             chunk_id += 1
         
-        # Store JD embedding separately for comparison
         jd_embedding = model.encode([job_description], convert_to_numpy=True)
         job_description_embedding = jd_embedding[0]
         np.save(JD_EMBEDDING_PATH, job_description_embedding)
     else:
-        # Clear JD embedding if no JD provided
         job_description_embedding = None
         if Path(JD_EMBEDDING_PATH).exists():
             Path(JD_EMBEDDING_PATH).unlink()
     
     print(f"Generating embeddings for {len(chunks)} chunks...")
     
-    # Generate embeddings
     embeddings = model.encode(
         chunks, 
         show_progress_bar=True, 
@@ -130,12 +126,11 @@ def build_embeddings(sections, combined_text, job_description=None):
     faiss.normalize_L2(embeddings.astype('float32'))
     index.add(embeddings.astype('float32'))
     
-    # Save to disk
     faiss.write_index(index, INDEX_PATH)
     with open(METADATA_PATH, 'w') as f:
         json.dump(metadata, f, indent=2)
     
-    print(f"✅ Created embeddings for {len(chunks)} chunks")
+    print(f"Created embeddings for {len(chunks)} chunks")
     print(f"   Resume chunks: {len([m for m in metadata if m['type'] != 'job_description'])}")
     if job_description:
         print(f"   JD chunks: {len([m for m in metadata if m['type'] == 'job_description'])}")
@@ -153,7 +148,7 @@ def load_or_create_index():
         if Path(JD_EMBEDDING_PATH).exists():
             job_description_embedding = np.load(JD_EMBEDDING_PATH)
         
-        print(f"✅ Loaded index with {len(metadata)} chunks")
+        print(f"Loaded index with {len(metadata)} chunks")
         return True
     return False
 
